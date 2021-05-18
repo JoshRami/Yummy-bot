@@ -1,20 +1,24 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TelegrafModule } from 'nestjs-telegraf';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AppUpdate } from './app.service';
+import { ScrapperModule } from './scrapper/scrapper.module';
 
 @Module({
   imports: [
-    TelegrafModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        token: config.get('TELEGRAM_BOT_TOKEN'),
-      }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      ignoreEnvFile: process.env.NODE_ENV === 'production',
     }),
+    TelegrafModule.forRootAsync({
+      imports: [ConfigModule.forRoot()],
+      useFactory: async (configService: ConfigService) => ({
+        token: configService.get<string>('TELEGRAM_BOT_TOKEN'),
+      }),
+      inject: [ConfigService],
+    }),
+    ScrapperModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  providers: [AppUpdate],
 })
 export class AppModule {}
