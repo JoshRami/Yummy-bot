@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TelegrafModule } from 'nestjs-telegraf';
-import { AppUpdate } from './app.service';
+import { YummyBot } from './app.service';
 import { ScrapperModule } from './scrapper/scrapper.module';
 
 @Module({
@@ -19,6 +19,6 @@ import { ScrapperModule } from './scrapper/scrapper.module';
     }),
     ScrapperModule,
   ],
-  providers: [AppUpdate],
+  providers: [YummyBot],
 })
 export class AppModule {}
