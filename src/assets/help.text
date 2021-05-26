@@ -1,4 +1,5 @@
 ```sh
 /price : pull price from poocoin 
-/stats : pull price, holders and marketcap 
+/stats : pull price, holders and marketcap
+/summary : get summary image  
 ```

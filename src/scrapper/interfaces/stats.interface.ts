@@ -3,4 +3,5 @@ export interface YummyStats {
   price: string;
   lastDayChange: string;
   holders: string;
+  burnedQuantity: string;
 }

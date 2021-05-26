@@ -14,26 +14,50 @@ export class ScrapperService {
   }
 
   async getYummyStats(): Promise<YummyStats> {
-    const yummyStatsPromise = this.getYummyStatsPage();
-    const yummyBscScanPagePromise = this.getBscScanYummyPage();
+    const BscScanYummyUrl = process.env.BS_SCAN_PAGE;
+
+    const statsPagePromise = this.getYummyStatsPage();
+    const bscScanPagePromise = this.getBscScanYummyPage(BscScanYummyUrl);
 
     const [yummyStats, yummyBscScanPage] = await Promise.all([
-      yummyStatsPromise,
-      yummyBscScanPagePromise,
+      statsPagePromise,
+      bscScanPagePromise,
     ]);
 
-    const yummyBscScanPageHtml = yummyBscScanPage.data;
-
     const statsCheerio = cheerio.load(yummyStats);
-    const bscScanCheerio = cheerio.load(yummyBscScanPageHtml);
+    const bscScanCheerio = cheerio.load(yummyBscScanPage.data);
 
     const cap = statsCheerio('h4[aria-label^="Plus"]').text();
-    const lastDayChange = statsCheerio('h4:contains("%")').text();
+    const lastDayChange = statsCheerio('h4:contains("%")').text().trim();
     const price = statsCheerio('h4:contains("$0.")').text();
-
     const holders = bscScanCheerio('.mr-3').text().split(' ')[0].trim();
+    const burnedQuantity = bscScanCheerio(
+      '#ContentPlaceHolder1_divFilteredHolderBalance',
+    )
+      .clone()
+      .children()
+      .remove()
+      .end()
+      .text()
+      .split(' ')[0]
+      .slice(0, -3);
 
-    return { cap, price, lastDayChange, holders };
+    const burnedQuantityNumber =
+      Math.round(parseFloat(burnedQuantity.replace(/,/g, '')) * 100) / 100;
+
+    const SUPPLY = 1000000000000;
+    const burnedQuantityPercentage = (
+      (burnedQuantityNumber / SUPPLY) *
+      100
+    ).toFixed(2);
+
+    return {
+      cap,
+      price,
+      lastDayChange,
+      holders,
+      burnedQuantity: `${burnedQuantity} - ${burnedQuantityPercentage}%`,
+    };
   }
 
   async getYummyStatsPage() {
@@ -49,8 +73,7 @@ export class ScrapperService {
     return content;
   }
 
-  async getBscScanYummyPage() {
-    const BscScanYummyUrl = process.env.BS_SCAN_PAGE;
-    return await this.httpService.get(BscScanYummyUrl).toPromise();
+  async getBscScanYummyPage(url: string) {
+    return await this.httpService.get(url).toPromise();
   }
 }

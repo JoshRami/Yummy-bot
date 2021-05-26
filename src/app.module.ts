@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TelegrafModule } from 'nestjs-telegraf';
 import { YummyBot } from './app.service';
 import { ScrapperModule } from './scrapper/scrapper.module';
+import { registerHelper } from 'handlebars';
 
 @Module({
   imports: [
@@ -21,4 +22,14 @@ import { ScrapperModule } from './scrapper/scrapper.module';
   ],
   providers: [YummyBot],
 })
-export class AppModule {}
+export class AppModule {
+  constructor() {
+    registerHelper('contains', (a: string, b: string, opts) => {
+      if (a.includes(b)) {
+        return opts.fn(this);
+      } else {
+        return opts.inverse(this);
+      }
+    });
+  }
+}
