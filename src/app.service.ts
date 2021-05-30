@@ -74,7 +74,7 @@ export class YummyBot {
     const page = await browser.newPage();
     await page.setContent(html);
     page.setViewport({ width: 488, height: 758, deviceScaleFactor: 2 });
-    await page.screenshot({ path: 'src/assets/yummy.png' });
+    await page.screenshot({ path: __dirname + 'yummy.png' });
 
     await page.close();
   }
@@ -84,7 +84,7 @@ export class YummyBot {
 
     const imageResponse = await this.firebaseStorage
       .bucket(bucketName)
-      .upload('src/assets/yummy.png');
+      .upload(__dirname + 'yummy.png');
 
     const { mediaLink } = imageResponse[imageResponse.length - 1];
 
