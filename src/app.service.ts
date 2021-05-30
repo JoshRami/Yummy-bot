@@ -68,7 +68,7 @@ export class YummyBot {
 
   async takeScreenShot(html: string) {
     const browser = await puppeteer.launch({
-      headless: false,
+      headless: true,
       ignoreHTTPSErrors: true,
       args: ['--no-sandbox'],
     });
