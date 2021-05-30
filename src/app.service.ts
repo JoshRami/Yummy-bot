@@ -74,7 +74,7 @@ export class YummyBot {
     });
     const page = await browser.newPage();
     await page.setContent(html);
-    page.setViewport({ width: 488, height: 758, deviceScaleFactor: 2 });
+    page.setViewport({ width: 488, height: 758 });
     await page.screenshot({ path: __dirname + 'yummy.png' });
 
     await page.close();
