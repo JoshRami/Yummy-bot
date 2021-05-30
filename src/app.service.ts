@@ -70,7 +70,7 @@ export class YummyBot {
     const browser = await puppeteer.launch({
       headless: true,
       ignoreHTTPSErrors: true,
-      args: ['--no-sandbox', '--disable-dev-shm-usage'],
+      args: ['--no-sandbox'],
     });
     const page = await browser.newPage();
     await page.setContent(html);
